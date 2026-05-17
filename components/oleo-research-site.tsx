@@ -1094,7 +1094,8 @@ export function OleoResearchSite() {
       <SiteNav activeTab={activeTab} onActiveTabChange={setActiveTab} />
       <Hero />
       <ResearchTabs activeTab={activeTab} />
-      <section className="mx-auto max-w-[1500px] px-4 pb-14 sm:px-6 lg:px-10">
+      <SourceFooter />
+      <section className="mx-auto max-w-[1500px] px-4 pt-10 pb-14 sm:px-6 lg:px-10">
         <div className="grid gap-4 border border-border bg-background/58 p-5 md:grid-cols-4 md:p-6">
           {[
             {
@@ -1133,7 +1134,6 @@ export function OleoResearchSite() {
           ))}
         </div>
       </section>
-      <SourceFooter />
     </div>
   )
 }
