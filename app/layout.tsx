@@ -1,4 +1,5 @@
 import type { Metadata } from "next"
+import { Analytics } from "@vercel/analytics/next"
 import { Atkinson_Hyperlegible, Geist_Mono, Saira } from "next/font/google"
 
 import "./globals.css"
@@ -62,6 +63,7 @@ export default function RootLayout({
     >
       <body>
         <ThemeProvider>{children}</ThemeProvider>
+        <Analytics />
       </body>
     </html>
   )
