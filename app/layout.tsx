@@ -1,3 +1,4 @@
+import type { Metadata } from "next"
 import { Atkinson_Hyperlegible, Geist_Mono, Saira } from "next/font/google"
 
 import "./globals.css"
@@ -22,10 +23,25 @@ const fontMono = Geist_Mono({
   variable: "--font-mono",
 })
 
-export const metadata = {
+export const metadata: Metadata = {
   title: "Oleo Kit Research",
   description:
     "Research base for an RC boat dragging reusable oleophilic sponge arrays through oil slicks.",
+  applicationName: "Oleo Kit Research",
+  manifest: "/manifest.webmanifest",
+  appleWebApp: {
+    capable: true,
+    title: "Oleo Kit",
+    statusBarStyle: "default",
+  },
+  icons: {
+    icon: [
+      { url: "/favicon.ico", sizes: "any" },
+      { url: "/icon.svg", type: "image/svg+xml" },
+      { url: "/icon-192.png", sizes: "192x192", type: "image/png" },
+    ],
+    apple: [{ url: "/apple-icon.png", sizes: "180x180", type: "image/png" }],
+  },
 }
 
 export default function RootLayout({

@@ -35,6 +35,13 @@ type Stat = {
   note: string
 }
 
+type NavItem = {
+  label: string
+  deck: string
+  href: string
+  tab?: TabId
+}
+
 const tabs: Array<{
   id: TabId
   label: string
@@ -92,7 +99,7 @@ const shapeStats: Stat[] = [
   {
     label: "Lead puck aspect ratio",
     value: "c/a 0.1 to 0.3",
-    note: "Researcher 1 predicts the lenticular puck beats a sphere under short contact time.",
+    note: "The lenticular puck is expected to beat a sphere under short contact time.",
   },
   {
     label: "One liter prototype",
@@ -130,7 +137,38 @@ const fabricationRows = [
     module: "Mesh sleeve sausage",
     route:
       "Rectangular strips loaded into a polymer mesh tube with tow webbing.",
-    why: "Researcher 2's best towable form: continuous swath, low snag, easy swap.",
+    why: "Best towable form: continuous swath, low snag, easy swap.",
+  },
+]
+
+const navItems: NavItem[] = [
+  {
+    label: "Overview",
+    deck: "Kit premise and specimen basis",
+    href: "#overview",
+  },
+  {
+    label: "Shape",
+    deck: "Puck geometry and squeezer",
+    href: "#research-tabs",
+    tab: "shape",
+  },
+  {
+    label: "Traversal",
+    deck: "Coverage path animation",
+    href: "#research-tabs",
+    tab: "path",
+  },
+  {
+    label: "Fabrication",
+    deck: "Foam, chemistry, and testing",
+    href: "#research-tabs",
+    tab: "fabrication",
+  },
+  {
+    label: "Sources",
+    deck: "External technical anchors",
+    href: "#sources",
   },
 ]
 
@@ -266,9 +304,140 @@ function ScenePanel({
   )
 }
 
+function HamburgerIcon({ open }: { open: boolean }) {
+  return (
+    <span
+      aria-hidden="true"
+      className="group relative block size-5 shrink-0"
+      data-open={open ? "true" : "false"}
+    >
+      <span className="absolute top-[calc(50%-6px)] left-1/2 h-0.5 w-5 origin-center -translate-x-1/2 -translate-y-1/2 bg-current transition-[top,translate,rotate,width,opacity] duration-[250ms] ease-out group-data-[open=true]:top-1/2 group-data-[open=true]:w-[1.35rem] group-data-[open=true]:rotate-45" />
+      <span className="absolute top-1/2 left-1/2 h-0.5 w-5 origin-center -translate-x-1/2 -translate-y-1/2 bg-current transition-[translate,rotate,width,opacity] duration-200 ease-out group-data-[open=true]:w-0 group-data-[open=true]:opacity-0" />
+      <span className="absolute top-[calc(50%+6px)] left-1/2 h-0.5 w-5 origin-center -translate-x-1/2 -translate-y-1/2 bg-current transition-[top,translate,rotate,width,opacity] duration-[250ms] ease-out group-data-[open=true]:top-1/2 group-data-[open=true]:w-[1.35rem] group-data-[open=true]:-rotate-45" />
+    </span>
+  )
+}
+
+function SiteNav({
+  activeTab,
+  onActiveTabChange,
+}: {
+  activeTab: TabId
+  onActiveTabChange: (tab: TabId) => void
+}) {
+  const [open, setOpen] = React.useState(false)
+  const menuId = React.useId()
+
+  function handleItemClick(
+    event: React.MouseEvent<HTMLAnchorElement>,
+    item: NavItem
+  ) {
+    setOpen(false)
+
+    if (!item.tab) {
+      return
+    }
+
+    event.preventDefault()
+    onActiveTabChange(item.tab)
+    window.requestAnimationFrame(() => {
+      document
+        .querySelector(item.href)
+        ?.scrollIntoView({ behavior: "smooth", block: "start" })
+    })
+  }
+
+  return (
+    <nav className="sticky top-0 z-50 border-b border-border bg-background/92 backdrop-blur">
+      <div className="mx-auto flex max-w-[1500px] items-center justify-between gap-4 px-4 py-3 sm:px-6 lg:px-10">
+        <a
+          href="#overview"
+          className="group inline-flex items-center gap-3 text-left"
+          onClick={() => setOpen(false)}
+        >
+          <span className="relative size-8 overflow-hidden border border-border bg-primary">
+            <span className="absolute inset-1 rounded-full border border-[oklch(0.48_0.086_61)] bg-[oklch(0.83_0.1_88)]" />
+            <span className="absolute top-2 left-2 size-1.5 rounded-full bg-[oklch(0.24_0.045_58)]" />
+            <span className="absolute right-2 bottom-2 size-2 rounded-full bg-[oklch(0.24_0.045_58)]" />
+          </span>
+          <span>
+            <span className="block font-heading text-xl leading-none font-semibold tracking-tight">
+              Oleo Kit
+            </span>
+            <span className="mt-1 block font-mono text-[0.62rem] leading-none tracking-[0.18em] text-muted-foreground uppercase">
+              research deck
+            </span>
+          </span>
+        </a>
+
+        <button
+          type="button"
+          aria-controls={menuId}
+          aria-expanded={open}
+          className="group inline-flex items-center gap-3 border border-border bg-background/72 px-4 py-3 font-mono text-xs tracking-[0.18em] text-muted-foreground uppercase transition-colors hover:bg-secondary hover:text-foreground data-[open=true]:bg-primary data-[open=true]:text-primary-foreground"
+          data-open={open ? "true" : "false"}
+          onClick={() => setOpen((value) => !value)}
+        >
+          <HamburgerIcon open={open} />
+          Menu
+        </button>
+      </div>
+
+      <div
+        id={menuId}
+        className={cn(
+          "grid overflow-hidden transition-[grid-template-rows,opacity,translate] duration-300 ease-out",
+          open
+            ? "translate-y-0 grid-rows-[1fr] opacity-100"
+            : "-translate-y-2 grid-rows-[0fr] opacity-0"
+        )}
+        inert={!open}
+      >
+        <div className="min-h-0 overflow-hidden">
+          <div className="mx-auto max-w-[1500px] px-4 pb-4 sm:px-6 lg:px-10">
+            <div className="grid border border-border bg-card/82 md:grid-cols-5">
+              {navItems.map((item) => {
+                const active = item.tab === activeTab
+
+                return (
+                  <a
+                    key={item.label}
+                    href={item.href}
+                    className={cn(
+                      "group min-h-24 border-b border-border p-4 text-left transition-colors last:border-b-0 hover:bg-secondary md:border-r md:border-b-0 md:last:border-r-0",
+                      active && "bg-primary text-primary-foreground"
+                    )}
+                    onClick={(event) => handleItemClick(event, item)}
+                  >
+                    <span className="block font-heading text-xl font-semibold tracking-tight">
+                      {item.label}
+                    </span>
+                    <span
+                      className={cn(
+                        "mt-2 block text-sm leading-5 text-muted-foreground transition-colors group-hover:text-foreground",
+                        active &&
+                          "text-primary-foreground/76 group-hover:text-primary-foreground"
+                      )}
+                    >
+                      {item.deck}
+                    </span>
+                  </a>
+                )
+              })}
+            </div>
+          </div>
+        </div>
+      </div>
+    </nav>
+  )
+}
+
 function Hero() {
   return (
-    <header className="field-grid relative border-b border-border">
+    <header
+      id="overview"
+      className="field-grid relative border-b border-border"
+    >
       <div className="mx-auto grid min-h-[92svh] w-full max-w-[1500px] px-4 py-5 sm:px-6 lg:px-10">
         <div className="grid content-center gap-10 py-16 lg:grid-cols-[minmax(0,0.94fr)_minmax(420px,0.76fr)] lg:items-center">
           <div>
@@ -344,7 +513,7 @@ function Hero() {
                       Reuse
                     </dt>
                     <dd className="mt-1 font-heading text-xl font-semibold">
-                      squeeze
+                      100
                     </dd>
                   </div>
                 </dl>
@@ -886,10 +1055,21 @@ function FabricationTab() {
   )
 }
 
-function ResearchTabs() {
+function ResearchTabs({
+  activeTab,
+  onActiveTabChange,
+}: {
+  activeTab: TabId
+  onActiveTabChange: (tab: TabId) => void
+}) {
   return (
-    <Tabs.Root defaultValue="shape" className="block" id="research-tabs">
-      <div className="sticky top-0 z-20 border-b border-border bg-background/88 backdrop-blur">
+    <Tabs.Root
+      value={activeTab}
+      onValueChange={(value) => onActiveTabChange(value as TabId)}
+      className="block"
+      id="research-tabs"
+    >
+      <div className="sticky top-[4.25rem] z-20 border-b border-border bg-background/88 backdrop-blur">
         <div className="mx-auto flex max-w-[1500px] flex-col gap-3 px-4 py-3 sm:px-6 lg:px-10">
           <Tabs.List
             aria-label="Oleo Kit research sections"
@@ -954,10 +1134,13 @@ function SourceFooter() {
 }
 
 export function OleoResearchSite() {
+  const [activeTab, setActiveTab] = React.useState<TabId>("shape")
+
   return (
     <div className="oleo-shell text-foreground">
+      <SiteNav activeTab={activeTab} onActiveTabChange={setActiveTab} />
       <Hero />
-      <ResearchTabs />
+      <ResearchTabs activeTab={activeTab} onActiveTabChange={setActiveTab} />
       <section className="mx-auto max-w-[1500px] px-4 pb-14 sm:px-6 lg:px-10">
         <div className="grid gap-4 border border-border bg-background/58 p-5 md:grid-cols-4 md:p-6">
           {[
