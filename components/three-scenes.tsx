@@ -549,20 +549,45 @@ function createSqueezerRuntime() {
     roughness: 0.32,
     metalness: 0.22,
   })
+  const rollerStripeMaterial = new THREE.MeshStandardMaterial({
+    color: 0x516057,
+    roughness: 0.48,
+  })
+  const addRollerStripe = (
+    roller: THREE.Mesh,
+    radius: number,
+    length: number
+  ) => {
+    const stripe = new THREE.Mesh(
+      new THREE.BoxGeometry(0.018, length * 1.02, 0.012),
+      rollerStripeMaterial
+    )
+    stripe.position.set(radius * 0.98, 0, 0)
+    roller.add(stripe)
+
+    const endCapMark = new THREE.Mesh(
+      new THREE.BoxGeometry(radius * 0.78, 0.012, 0.018),
+      rollerStripeMaterial
+    )
+    endCapMark.position.set(radius * 0.22, length / 2 + 0.008, 0)
+    roller.add(endCapMark)
+  }
   const lowerRoller = new THREE.Mesh(
-    new THREE.CylinderGeometry(0.14, 0.14, 1.22, 36),
+    new THREE.CylinderGeometry(0.12, 0.12, 1.22, 36),
     rollerMaterial
   )
   lowerRoller.rotation.x = Math.PI / 2
-  lowerRoller.position.set(-0.23, 0.235, 0)
+  lowerRoller.position.set(-0.23, 0.17, 0)
+  addRollerStripe(lowerRoller, 0.12, 1.22)
   root.add(lowerRoller)
 
   const upperRoller = new THREE.Mesh(
-    new THREE.CylinderGeometry(0.2, 0.2, 1.22, 36),
+    new THREE.CylinderGeometry(0.15, 0.15, 1.22, 36),
     rollerMaterial
   )
   upperRoller.rotation.x = Math.PI / 2
-  upperRoller.position.set(-0.23, 0.485, 0)
+  upperRoller.position.set(-0.23, 0.46, 0)
+  addRollerStripe(upperRoller, 0.15, 1.22)
   root.add(upperRoller)
 
   const frameMaterial = new THREE.MeshStandardMaterial({
@@ -670,6 +695,7 @@ function createSqueezerRuntime() {
   droplets.instanceMatrix.needsUpdate = true
 
   const beltTop = 0.15
+  const pinchCenterY = 0.305
   const rollerX = -0.23
 
   return {
@@ -684,10 +710,15 @@ function createSqueezerRuntime() {
       puck.scale.y = 0.095 - compression * 0.045
       puck.scale.x = 0.42 + compression * 0.032
       puck.scale.z = 0.42 + compression * 0.032
-      puck.position.y = beltTop + puck.scale.y + 0.012
-      puck.rotation.z += 0.018
-      lowerRoller.rotation.z += 0.04
-      upperRoller.rotation.z -= 0.045
+      const beltCenterY = beltTop + puck.scale.y + 0.012
+      puck.position.y = THREE.MathUtils.lerp(
+        beltCenterY,
+        pinchCenterY,
+        compression
+      )
+      puck.rotation.set(0, 0, 0)
+      lowerRoller.rotateY(0.04)
+      upperRoller.rotateY(-0.045)
       jets.scale.x = 0.9 + Math.sin(elapsed * 8) * 0.06
       jetMaterial.opacity = 0.54 + Math.sin(elapsed * 9) * 0.08
       dropletMaterial.opacity = 0.52 + Math.sin(elapsed * 3) * 0.12
