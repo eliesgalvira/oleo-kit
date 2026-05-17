@@ -10,6 +10,8 @@ import { cn } from "@/lib/utils"
 const siteUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
   : (process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000")
+const socialImageUrl = new URL("/og-image.png?v=2", siteUrl)
+const twitterImageUrl = new URL("/twitter-image.png?v=2", siteUrl)
 
 const fontSans = Atkinson_Hyperlegible({
   subsets: ["latin"],
@@ -39,13 +41,34 @@ export const metadata: Metadata = {
     description:
       "Shape selection, traversal strategy, and fabrication routes for a reusable oleophilic sponge array.",
     type: "website",
+    url: siteUrl,
     siteName: "Oleo Kit Research",
+    images: [
+      {
+        url: socialImageUrl,
+        secureUrl: socialImageUrl,
+        width: 1200,
+        height: 630,
+        alt: "Oleo Kit Research deck preview showing an oil-slick collector sponge concept.",
+        type: "image/png",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "Oleo Kit Research",
     description:
       "Shape selection, traversal strategy, and fabrication routes for a reusable oleophilic sponge array.",
+    images: [
+      {
+        url: twitterImageUrl,
+        secureUrl: twitterImageUrl,
+        width: 1200,
+        height: 630,
+        alt: "Oleo Kit Research deck preview showing an oil-slick collector sponge concept.",
+        type: "image/png",
+      },
+    ],
   },
   manifest: "/manifest.webmanifest",
   appleWebApp: {
