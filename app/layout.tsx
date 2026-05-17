@@ -7,6 +7,10 @@ import "katex/dist/katex.min.css"
 import { ThemeProvider } from "@/components/theme-provider"
 import { cn } from "@/lib/utils"
 
+const siteUrl = process.env.VERCEL_URL
+  ? `https://${process.env.VERCEL_URL}`
+  : (process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000")
+
 const fontSans = Atkinson_Hyperlegible({
   subsets: ["latin"],
   variable: "--font-sans",
@@ -25,10 +29,24 @@ const fontMono = Geist_Mono({
 })
 
 export const metadata: Metadata = {
+  metadataBase: new URL(siteUrl),
   title: "Oleo Kit Research",
   description:
     "Research base for an RC boat dragging reusable oleophilic sponge arrays through oil slicks.",
   applicationName: "Oleo Kit Research",
+  openGraph: {
+    title: "Oleo Kit Research",
+    description:
+      "Shape selection, traversal strategy, and fabrication routes for a reusable oleophilic sponge array.",
+    type: "website",
+    siteName: "Oleo Kit Research",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Oleo Kit Research",
+    description:
+      "Shape selection, traversal strategy, and fabrication routes for a reusable oleophilic sponge array.",
+  },
   manifest: "/manifest.webmanifest",
   appleWebApp: {
     capable: true,
