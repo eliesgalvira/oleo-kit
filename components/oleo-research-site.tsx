@@ -1,7 +1,6 @@
 "use client"
 
 import * as React from "react"
-import { Tabs } from "radix-ui"
 import katex from "katex"
 import {
   ArrowUpRight,
@@ -9,14 +8,11 @@ import {
   Factory,
   FlaskConical,
   Microscope,
-  Route,
-  Ruler,
   Ship,
   Sparkles,
   Waves,
   Wind,
 } from "lucide-react"
-import type { LucideIcon } from "lucide-react"
 
 import { ThreeScene } from "@/components/three-scenes"
 import { Button } from "@/components/ui/button"
@@ -41,32 +37,6 @@ type NavItem = {
   href: string
   tab?: TabId
 }
-
-const tabs: Array<{
-  id: TabId
-  label: string
-  deck: string
-  icon: LucideIcon
-}> = [
-  {
-    id: "shape",
-    label: "Oleo sponge shape",
-    deck: "Puck geometry, uptake limits, and post-run squeezing",
-    icon: Ruler,
-  },
-  {
-    id: "path",
-    label: "Path traversal",
-    deck: "Weighted coverage paths for a moving slick",
-    icon: Route,
-  },
-  {
-    id: "fabrication",
-    label: "Fabrication research",
-    deck: "Foam, coating chemistry, cutting, and test matrices",
-    icon: Factory,
-  },
-]
 
 const sources: Source[] = [
   {
@@ -1055,59 +1025,16 @@ function FabricationTab() {
   )
 }
 
-function ResearchTabs({
-  activeTab,
-  onActiveTabChange,
-}: {
-  activeTab: TabId
-  onActiveTabChange: (tab: TabId) => void
-}) {
+function ResearchTabs({ activeTab }: { activeTab: TabId }) {
   return (
-    <Tabs.Root
-      value={activeTab}
-      onValueChange={(value) => onActiveTabChange(value as TabId)}
-      className="block"
+    <main
       id="research-tabs"
+      className="mx-auto max-w-[1500px] scroll-mt-24 px-4 sm:px-6 lg:px-10"
     >
-      <div className="sticky top-[4.25rem] z-20 border-b border-border bg-background/88 backdrop-blur">
-        <div className="mx-auto flex max-w-[1500px] flex-col gap-3 px-4 py-3 sm:px-6 lg:px-10">
-          <Tabs.List
-            aria-label="Oleo Kit research sections"
-            className="grid gap-2 md:grid-cols-3"
-          >
-            {tabs.map((tab) => (
-              <Tabs.Trigger
-                key={tab.id}
-                value={tab.id}
-                className="group flex min-h-20 items-start gap-3 border border-border bg-background/58 p-4 text-left transition-colors hover:bg-secondary data-[state=active]:border-foreground data-[state=active]:bg-primary"
-              >
-                <tab.icon className="mt-1 size-5 text-muted-foreground group-data-[state=active]:text-primary-foreground" />
-                <span>
-                  <span className="block font-heading text-lg font-semibold tracking-tight text-foreground group-data-[state=active]:text-primary-foreground">
-                    {tab.label}
-                  </span>
-                  <span className="mt-1 block text-xs leading-5 text-muted-foreground group-data-[state=active]:text-primary-foreground/75">
-                    {tab.deck}
-                  </span>
-                </span>
-              </Tabs.Trigger>
-            ))}
-          </Tabs.List>
-        </div>
-      </div>
-
-      <main className="mx-auto max-w-[1500px] px-4 sm:px-6 lg:px-10">
-        <Tabs.Content value="shape" className="outline-none">
-          <ShapeTab />
-        </Tabs.Content>
-        <Tabs.Content value="path" className="outline-none">
-          <PathTab />
-        </Tabs.Content>
-        <Tabs.Content value="fabrication" className="outline-none">
-          <FabricationTab />
-        </Tabs.Content>
-      </main>
-    </Tabs.Root>
+      {activeTab === "shape" && <ShapeTab />}
+      {activeTab === "path" && <PathTab />}
+      {activeTab === "fabrication" && <FabricationTab />}
+    </main>
   )
 }
 
@@ -1140,7 +1067,7 @@ export function OleoResearchSite() {
     <div className="oleo-shell text-foreground">
       <SiteNav activeTab={activeTab} onActiveTabChange={setActiveTab} />
       <Hero />
-      <ResearchTabs activeTab={activeTab} onActiveTabChange={setActiveTab} />
+      <ResearchTabs activeTab={activeTab} />
       <section className="mx-auto max-w-[1500px] px-4 pb-14 sm:px-6 lg:px-10">
         <div className="grid gap-4 border border-border bg-background/58 p-5 md:grid-cols-4 md:p-6">
           {[
