@@ -269,7 +269,7 @@ function ScenePanel({
 function Hero() {
   return (
     <header className="field-grid relative border-b border-border">
-      <div className="mx-auto grid min-h-[92svh] w-full max-w-[1500px] grid-rows-[1fr_auto] px-4 py-5 sm:px-6 lg:px-10">
+      <div className="mx-auto grid min-h-[92svh] w-full max-w-[1500px] px-4 py-5 sm:px-6 lg:px-10">
         <div className="grid content-center gap-10 py-16 lg:grid-cols-[minmax(0,0.94fr)_minmax(420px,0.76fr)] lg:items-center">
           <div>
             <div className="inline-flex items-center gap-2 border border-border bg-background/65 px-3 py-2 text-xs font-medium tracking-[0.22em] text-muted-foreground uppercase">
@@ -337,21 +337,6 @@ function Hero() {
             </div>
           </div>
         </div>
-
-        <div className="grid gap-3 border-t border-border pt-4 text-xs text-muted-foreground md:grid-cols-3">
-          <p>
-            Thread A favors a lenticular puck matrix because short capillary
-            travel and rounded hydrodynamics can coexist.
-          </p>
-          <p>
-            Thread B favors long sponge sausage modules because a continuous
-            swath beats loose spheres in real towing.
-          </p>
-          <p>
-            The kit synthesis below treats pucks as the experimental cell and
-            mesh sleeves as the scalable array form.
-          </p>
-        </div>
       </div>
     </header>
   )
@@ -410,13 +395,13 @@ function ShapeTab() {
 
       <div className="grid gap-6 lg:grid-cols-2">
         <ResearchThread
-          marker="Research thread A"
+          marker="Sorption model"
           title="Lenticular puck as the first-principles optimum"
         >
           <p>
-            Thread A frames the problem as sorption under finite contact time.
-            The puck shortens the longest oil path to the half-thickness while
-            keeping a rounded form that is less fragile than a sheet.
+            The shape problem is sorption under finite contact time. The puck
+            shortens the longest oil path to the half-thickness while keeping a
+            rounded form that is less fragile than a sheet.
           </p>
           <Formula
             block
@@ -436,13 +421,13 @@ function ShapeTab() {
         </ResearchThread>
 
         <ResearchThread
-          marker="Research thread B"
+          marker="Tow geometry"
           title="Flattened sausage as the towable operating form"
         >
           <p>
-            Thread B argues that swept area is the true bottleneck for thin
-            slicks. A long rounded strip or sponge sausage gives a continuous
-            contact line and avoids the gaps that loose spheres create.
+            Swept area is the true bottleneck for thin slicks. A long rounded
+            strip or sponge sausage gives a continuous contact line and avoids
+            the gaps that loose spheres create.
           </p>
           <Formula
             block
@@ -542,10 +527,10 @@ function ShapeTab() {
           title="A squeezer and air knife finish the recovery cycle."
         >
           <p>
-            This was not part of the two researchers&apos; original research. It
-            is an added kit requirement: design a squeezer that compresses the
-            loaded puck or sleeve, then uses an air knife at the output to blow
-            residual oil from the surface before redeployment.
+            This is a future kit requirement beyond the current sponge-shape
+            study: design a squeezer that compresses the loaded puck or sleeve,
+            then uses an air knife at the output to blow residual oil from the
+            surface before redeployment.
           </p>
         </SectionIntro>
         <ScenePanel
@@ -576,11 +561,10 @@ function PathTab() {
         title="The boat should mow the thick oil, not circle the edge."
       >
         <p>
-          Both researchers reject random circles as the main mode. Thread A
-          specifies drift-compensated weighted boustrophedon passes. Thread B
-          translates that into a practical RC procedure: slow overlapping
-          lawnmower lanes, with an inward spiral reserved for compact circular
-          slicks.
+          Random circles are not the main mode. The traversal strategy is
+          drift-compensated weighted boustrophedon coverage, translated into a
+          practical RC procedure: slow overlapping lawnmower lanes, with an
+          inward spiral reserved for compact circular slicks.
         </p>
       </SectionIntro>
 
@@ -602,12 +586,12 @@ function PathTab() {
 
       <div className="grid gap-6 lg:grid-cols-[0.95fr_1.05fr]">
         <ResearchThread
-          marker="Research thread A"
+          marker="Coverage model"
           title="Weighted boustrophedon in the slick frame"
         >
           <p>
-            Thread A treats the sponge array as a moving collector footprint.
-            The plan is generated against oil thickness
+            Treat the sponge array as a moving collector footprint. The plan is
+            generated against oil thickness
             <Formula tex={String.raw`h(x,y,t)`} />, then corrected for current,
             wind drift, Stokes drift, and diffusion.
           </p>
@@ -623,12 +607,12 @@ function PathTab() {
         </ResearchThread>
 
         <ResearchThread
-          marker="Research thread B"
+          marker="RC operating model"
           title="Overlapping lanes and a U or V sponge boom"
         >
           <p>
-            Thread B emphasizes RC handling: keep the propeller out of the oil
-            when possible, tow slowly, turn outside the slick, and use a U or V
+            RC handling matters: keep the propeller out of the oil when
+            possible, tow slowly, turn outside the slick, and use a U or V
             absorber if two boats, outriggers, or side floats are available.
           </p>
           <Formula
@@ -724,10 +708,10 @@ function FabricationTab() {
         title="Fabricate simple foam stock first, then create operational geometry."
       >
         <p>
-          The two research threads agree on the material stack: open-cell foam,
-          hydrophobic and oleophilic surface treatment, then mechanical forms
-          that can be towed, wrung, and redeployed. They diverge on shape, which
-          becomes a test matrix instead of a debate.
+          The material stack is open-cell foam, hydrophobic and oleophilic
+          surface treatment, then mechanical forms that can be towed, wrung, and
+          redeployed. Shape becomes a test matrix: pucks, strips, cylinders, and
+          sleeved boom modules.
         </p>
       </SectionIntro>
 
@@ -752,14 +736,14 @@ function FabricationTab() {
 
       <div className="grid gap-6 lg:grid-cols-2">
         <ResearchThread
-          marker="Research thread A"
+          marker="Foam shaping route"
           title="Reticulated foam, then puck, sheet, and cylinder controls"
         >
           <p>
-            Thread A proposes reticulated polyurethane or polyimide foam, cut
-            before coating so fresh internal surfaces receive the same
-            oleophilic treatment. The test set includes oblate pucks, a sphere
-            control, laminate sheets, and rope-mop cylinders.
+            Use reticulated polyurethane or polyimide foam, cut before coating
+            so fresh internal surfaces receive the same oleophilic treatment.
+            The test set includes oblate pucks, a sphere control, laminate
+            sheets, and rope-mop cylinders.
           </p>
           <Formula
             block
@@ -772,13 +756,13 @@ function FabricationTab() {
         </ResearchThread>
 
         <ResearchThread
-          marker="Research thread B"
+          marker="Sleeved module route"
           title="Rectangular strips inside mesh sleeves for massing"
         >
           <p>
-            Thread B separates fabrication shape from operating shape. Make
-            strips or pads because they are cheap and repeatable, then load them
-            into mesh sleeves so the module behaves like a rounded boom.
+            Separate fabrication shape from operating shape. Make strips or pads
+            because they are cheap and repeatable, then load them into mesh
+            sleeves so the module behaves like a rounded boom.
           </p>
           <Formula block tex={String.raw`g\ge0.1d`} />
           <p>
@@ -941,11 +925,6 @@ function SourceFooter() {
           <h2 className="mt-3 font-heading text-3xl font-semibold tracking-tight">
             Sources used to ground the technical claims.
           </h2>
-          <p className="mt-4 max-w-xl text-sm leading-7 text-muted-foreground">
-            The page also integrates the two independent research reports you
-            supplied. External links are kept here so the tab content stays
-            readable while retaining traceability.
-          </p>
         </div>
         <div className="flex flex-wrap gap-2">
           {sources.map((source) => (
