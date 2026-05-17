@@ -1,15 +1,32 @@
-import { Geist, Geist_Mono, Inter } from "next/font/google"
+import { Atkinson_Hyperlegible, Geist_Mono, Saira } from "next/font/google"
 
 import "./globals.css"
+import "katex/dist/katex.min.css"
 import { ThemeProvider } from "@/components/theme-provider"
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/utils"
 
-const inter = Inter({subsets:['latin'],variable:'--font-sans'})
+const fontSans = Atkinson_Hyperlegible({
+  subsets: ["latin"],
+  variable: "--font-sans",
+  weight: ["400", "700"],
+})
+
+const fontHeading = Saira({
+  subsets: ["latin"],
+  variable: "--font-heading",
+  weight: ["400", "500", "600", "700", "800"],
+})
 
 const fontMono = Geist_Mono({
   subsets: ["latin"],
   variable: "--font-mono",
 })
+
+export const metadata = {
+  title: "Oleo Kit Research",
+  description:
+    "Research base for an RC boat dragging reusable oleophilic sponge arrays through oil slicks.",
+}
 
 export default function RootLayout({
   children,
@@ -20,7 +37,12 @@ export default function RootLayout({
     <html
       lang="en"
       suppressHydrationWarning
-      className={cn("antialiased", fontMono.variable, "font-sans", inter.variable)}
+      className={cn(
+        "font-sans antialiased",
+        fontHeading.variable,
+        fontMono.variable,
+        fontSans.variable
+      )}
     >
       <body>
         <ThemeProvider>{children}</ThemeProvider>
