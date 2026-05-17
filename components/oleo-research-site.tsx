@@ -297,6 +297,28 @@ function SiteNav({
 }) {
   const [open, setOpen] = React.useState(false)
   const menuId = React.useId()
+  const navRef = React.useRef<HTMLElement>(null)
+
+  function scrollToAnchor(href: string) {
+    if (href === "#overview") {
+      window.scrollTo({ top: 0, behavior: "smooth" })
+      return
+    }
+
+    const target = document.querySelector(href)
+    if (!target) {
+      return
+    }
+
+    const navHeight = navRef.current?.getBoundingClientRect().height ?? 0
+    const targetTop =
+      target.getBoundingClientRect().top + window.scrollY - navHeight - 16
+
+    window.scrollTo({
+      top: Math.max(0, targetTop),
+      behavior: "smooth",
+    })
+  }
 
   function handleItemClick(
     event: React.MouseEvent<HTMLAnchorElement>,
@@ -309,21 +331,17 @@ function SiteNav({
       onActiveTabChange(item.tab)
     }
 
-    window.requestAnimationFrame(() => {
-      if (item.href === "#overview") {
-        window.scrollTo({ top: 0, behavior: "smooth" })
-        return
-      }
-
-      document.querySelector(item.href)?.scrollIntoView({
-        behavior: "smooth",
-        block: "start",
-      })
-    })
+    window.setTimeout(
+      () => window.requestAnimationFrame(() => scrollToAnchor(item.href)),
+      open ? 320 : 0
+    )
   }
 
   return (
-    <nav className="sticky top-0 z-50 border-b border-border bg-background/92 backdrop-blur">
+    <nav
+      ref={navRef}
+      className="sticky top-0 z-50 border-b border-border bg-background/92 backdrop-blur"
+    >
       <div className="mx-auto flex max-w-[1500px] items-center justify-between gap-4 px-4 py-3 sm:px-6 lg:px-10">
         <a
           href="#overview"
@@ -1045,7 +1063,10 @@ function ResearchTabs({ activeTab }: { activeTab: TabId }) {
 
 function SourceFooter() {
   return (
-    <footer id="sources" className="border-t border-border bg-card/76">
+    <footer
+      id="sources"
+      className="min-h-[calc(100svh-4.5rem)] border-t border-border bg-card/76"
+    >
       <div className="mx-auto grid max-w-[1500px] gap-8 px-4 py-10 sm:px-6 lg:grid-cols-[0.75fr_1.25fr] lg:px-10">
         <div>
           <p className="font-mono text-xs tracking-[0.26em] text-muted-foreground uppercase">
