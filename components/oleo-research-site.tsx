@@ -5,6 +5,7 @@ import katex from "katex"
 import {
   ArrowUpRight,
   Beaker,
+  ChevronDown,
   Factory,
   FlaskConical,
   Microscope,
@@ -426,8 +427,35 @@ function SiteNav({
 }
 
 function Hero() {
+  const overviewRef = React.useRef<HTMLElement>(null)
+  const [showScrollHint, setShowScrollHint] = React.useState(true)
+
+  React.useEffect(() => {
+    const overview = overviewRef.current
+
+    if (!overview) {
+      return
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setShowScrollHint(
+          entry.isIntersecting && entry.intersectionRatio > 0.52
+        )
+      },
+      {
+        threshold: [0, 0.25, 0.52, 0.75, 1],
+      }
+    )
+
+    observer.observe(overview)
+
+    return () => observer.disconnect()
+  }, [])
+
   return (
     <header
+      ref={overviewRef}
       id="overview"
       className="field-grid relative border-b border-border"
     >
@@ -513,6 +541,21 @@ function Hero() {
               </div>
             </div>
           </div>
+        </div>
+      </div>
+      <div
+        aria-hidden="true"
+        className={cn(
+          "pointer-events-none fixed bottom-5 left-1/2 z-40 -translate-x-1/2 transition-[opacity,translate] duration-500 ease-out motion-reduce:transition-none",
+          showScrollHint
+            ? "translate-y-0 opacity-100"
+            : "translate-y-3 opacity-0"
+        )}
+      >
+        <div className="scroll-hint-shell flex items-center gap-3 border border-border bg-background/78 px-3 py-2 text-[0.68rem] font-medium tracking-[0.2em] text-muted-foreground uppercase backdrop-blur">
+          <span className="scroll-hint-track" />
+          <span>Scroll</span>
+          <ChevronDown className="size-3.5 text-primary" />
         </div>
       </div>
     </header>
