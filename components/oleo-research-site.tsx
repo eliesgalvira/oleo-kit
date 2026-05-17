@@ -1065,7 +1065,7 @@ function SourceFooter() {
   return (
     <footer
       id="sources"
-      className="min-h-[calc(100svh-4.5rem)] border-t border-border bg-card/76"
+      className="scroll-mt-24 border-t border-border bg-card/76"
     >
       <div className="mx-auto grid max-w-[1500px] gap-8 px-4 py-10 sm:px-6 lg:grid-cols-[0.75fr_1.25fr] lg:px-10">
         <div>
