@@ -365,7 +365,8 @@ function ShapeTab() {
         <p>
           The model shows the puck as a flattened porous ellipsoid at the
           oil-water interface. Drag to inspect the capillary path, rim, and oil
-          contact band.
+          contact band. The dark ring around the rim represents the surface oil
+          film contacted by the puck, not a cast shadow.
         </p>
         <p>
           The design target is{" "}
@@ -539,9 +540,10 @@ function ShapeTab() {
           title="Rollers plus output air knife"
         >
           <p>
-            The roller gap recovers bulk oil. The air knife is placed after the
-            squeeze point so a thin sheet of air strips remaining oil from the
-            puck surface into the collection tray.
+            A belt carries the puck through a supported pinch roller pair. The
+            upper roller compresses the sponge against the lower roller, and an
+            outlet air knife strips residual surface oil into the collection
+            trough before redeployment.
           </p>
           <Formula
             block

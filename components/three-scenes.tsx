@@ -125,15 +125,13 @@ function createPuckRuntime() {
   root.rotation.x = -0.08
   addSeaPlane(root, 6.2, 0.5)
 
-  const oil = new THREE.Mesh(
-    new THREE.CircleGeometry(1.9, 96),
-    createOilMaterial(0.55)
+  const oilFilm = new THREE.Mesh(
+    new THREE.RingGeometry(1.36, 1.78, 128),
+    createOilMaterial(0.58)
   )
-  oil.rotation.x = -Math.PI / 2
-  oil.scale.set(1.35, 0.42, 1)
-  oil.position.y = -0.028
-  oil.position.z = -0.18
-  root.add(oil)
+  oilFilm.rotation.x = -Math.PI / 2
+  oilFilm.position.y = -0.026
+  root.add(oilFilm)
 
   const foamTexture = createFoamTexture()
   const puckMaterial = new THREE.MeshPhysicalMaterial({
@@ -226,7 +224,7 @@ function createPuckRuntime() {
     root,
     update: (_delta: number, elapsed: number) => {
       root.rotation.y += 0.0025
-      oil.material.opacity = 0.47 + Math.sin(elapsed * 1.4) * 0.05
+      oilFilm.material.opacity = 0.47 + Math.sin(elapsed * 1.4) * 0.05
       puck.rotation.y = Math.sin(elapsed * 0.42) * 0.08
     },
   } satisfies SceneRuntime
@@ -266,6 +264,47 @@ function createSpongeCylinder(length: number, radius: number) {
   )
   mesh.rotation.z = Math.PI / 2
   return mesh
+}
+
+function createRoundedCoveragePath() {
+  const xMin = -2.72
+  const xMax = 2.72
+  const y = 0.025
+  const lanes = [-1.25, -0.55, 0.15, 0.85]
+  const points: THREE.Vector3[] = [new THREE.Vector3(xMin, y, lanes[0])]
+  const arcSegments = 20
+
+  for (let lane = 0; lane < lanes.length; lane += 1) {
+    const goingRight = lane % 2 === 0
+    const endX = goingRight ? xMax : xMin
+    points.push(new THREE.Vector3(endX, y, lanes[lane]))
+
+    if (lane === lanes.length - 1) {
+      continue
+    }
+
+    const z0 = lanes[lane]
+    const z1 = lanes[lane + 1]
+    const radius = (z1 - z0) / 2
+    const midZ = (z0 + z1) / 2
+    const centerX = endX
+
+    for (let i = 1; i <= arcSegments; i += 1) {
+      const t = i / arcSegments
+      const theta = goingRight
+        ? -Math.PI / 2 + Math.PI * t
+        : -Math.PI / 2 - Math.PI * t
+      points.push(
+        new THREE.Vector3(
+          centerX + Math.cos(theta) * radius,
+          y,
+          midZ + Math.sin(theta) * radius
+        )
+      )
+    }
+  }
+
+  return points
 }
 
 function pathLength(points: PathPoint[]) {
@@ -325,16 +364,7 @@ function createBoatRuntime() {
   slick.position.z = 0.1
   root.add(slick)
 
-  const lanePoints = [
-    new THREE.Vector3(-2.8, 0.025, -1.25),
-    new THREE.Vector3(2.8, 0.025, -1.25),
-    new THREE.Vector3(2.8, 0.025, -0.55),
-    new THREE.Vector3(-2.8, 0.025, -0.55),
-    new THREE.Vector3(-2.8, 0.025, 0.15),
-    new THREE.Vector3(2.8, 0.025, 0.15),
-    new THREE.Vector3(2.8, 0.025, 0.85),
-    new THREE.Vector3(-2.8, 0.025, 0.85),
-  ]
+  const lanePoints = createRoundedCoveragePath()
   const pathLine = new THREE.Line(
     new THREE.BufferGeometry().setFromPoints(lanePoints),
     new THREE.LineBasicMaterial({
@@ -435,17 +465,23 @@ function createBoatRuntime() {
     z: point.z,
   }))
   const total = pathLength(points)
+  let currentHeading = 0
 
   return {
     root,
-    update: (_delta: number, elapsed: number) => {
+    update: (delta: number, elapsed: number) => {
       const sample = samplePath(points, (elapsed * 0.58) % total)
       boat.position.set(
         sample.x,
         0.05 + Math.sin(elapsed * 2.2) * 0.012,
         sample.z
       )
-      boat.rotation.y = sample.heading
+      const turnDelta = Math.atan2(
+        Math.sin(sample.heading - currentHeading),
+        Math.cos(sample.heading - currentHeading)
+      )
+      currentHeading += turnDelta * Math.min(1, delta * 9)
+      boat.rotation.y = currentHeading
       slick.scale.setScalar(1 + Math.sin(elapsed * 0.6) * 0.015)
       boom.rotation.z = Math.sin(elapsed * 1.8) * 0.03
     },
@@ -454,39 +490,110 @@ function createBoatRuntime() {
 
 function createSqueezerRuntime() {
   const root = new THREE.Group()
-  root.rotation.x = -0.08
-  addSeaPlane(root, 6.4, 0.38)
+  root.rotation.x = -0.1
+  addSeaPlane(root, 6.6, 0.34)
 
   const base = new THREE.Mesh(
-    new THREE.BoxGeometry(4.3, 0.08, 1.25),
+    new THREE.BoxGeometry(4.65, 0.08, 1.55),
     new THREE.MeshStandardMaterial({
-      color: 0x314944,
+      color: 0x2d4742,
       roughness: 0.62,
     })
   )
   base.position.y = 0.02
   root.add(base)
 
-  const rollerMaterial = new THREE.MeshStandardMaterial({
-    color: 0xb7b18a,
-    roughness: 0.36,
-    metalness: 0.15,
-  })
-  const rollerA = new THREE.Mesh(
-    new THREE.CylinderGeometry(0.18, 0.18, 1.36, 32),
-    rollerMaterial
+  const belt = new THREE.Mesh(
+    new THREE.BoxGeometry(4.12, 0.055, 1.02),
+    new THREE.MeshStandardMaterial({
+      color: 0x1e312e,
+      roughness: 0.76,
+    })
   )
-  rollerA.rotation.x = Math.PI / 2
-  rollerA.position.set(-0.2, 0.34, 0)
-  root.add(rollerA)
+  belt.position.set(-0.06, 0.11, 0)
+  root.add(belt)
 
-  const rollerB = new THREE.Mesh(
-    new THREE.CylinderGeometry(0.18, 0.18, 1.36, 32),
+  const railMaterial = new THREE.MeshStandardMaterial({
+    color: 0x46675f,
+    roughness: 0.62,
+  })
+  for (const z of [-0.63, 0.63]) {
+    const rail = new THREE.Mesh(
+      new THREE.BoxGeometry(4.18, 0.06, 0.055),
+      railMaterial
+    )
+    rail.position.set(-0.06, 0.19, z)
+    root.add(rail)
+  }
+
+  const tray = new THREE.Mesh(
+    new THREE.BoxGeometry(1.35, 0.08, 1.08),
+    new THREE.MeshStandardMaterial({
+      color: 0x17231f,
+      roughness: 0.42,
+      metalness: 0.1,
+    })
+  )
+  tray.position.set(0.16, 0.075, 0)
+  root.add(tray)
+
+  const recoveredOil = new THREE.Mesh(
+    new THREE.BoxGeometry(1.12, 0.012, 0.84),
+    createOilMaterial(0.82)
+  )
+  recoveredOil.position.set(0.16, 0.127, 0)
+  root.add(recoveredOil)
+
+  const rollerMaterial = new THREE.MeshStandardMaterial({
+    color: 0x9aa18f,
+    roughness: 0.32,
+    metalness: 0.22,
+  })
+  const lowerRoller = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.14, 0.14, 1.22, 36),
     rollerMaterial
   )
-  rollerB.rotation.x = Math.PI / 2
-  rollerB.position.set(0.28, 0.34, 0)
-  root.add(rollerB)
+  lowerRoller.rotation.x = Math.PI / 2
+  lowerRoller.position.set(-0.23, 0.235, 0)
+  root.add(lowerRoller)
+
+  const upperRoller = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.2, 0.2, 1.22, 36),
+    rollerMaterial
+  )
+  upperRoller.rotation.x = Math.PI / 2
+  upperRoller.position.set(-0.23, 0.485, 0)
+  root.add(upperRoller)
+
+  const frameMaterial = new THREE.MeshStandardMaterial({
+    color: 0x203f46,
+    roughness: 0.48,
+    metalness: 0.12,
+  })
+  for (const z of [-0.74, 0.74]) {
+    for (const x of [-0.5, 0.04]) {
+      const post = new THREE.Mesh(
+        new THREE.BoxGeometry(0.07, 0.62, 0.07),
+        frameMaterial
+      )
+      post.position.set(x, 0.42, z)
+      root.add(post)
+    }
+  }
+  const topBeam = new THREE.Mesh(
+    new THREE.BoxGeometry(0.08, 0.08, 1.58),
+    frameMaterial
+  )
+  topBeam.position.set(-0.23, 0.74, 0)
+  root.add(topBeam)
+  for (const z of [-0.74, 0.74]) {
+    const sideBeam = new THREE.Mesh(
+      new THREE.BoxGeometry(0.7, 0.06, 0.06),
+      frameMaterial
+    )
+    sideBeam.position.set(-0.23, 0.74, z)
+    root.add(sideBeam)
+  }
 
   const puck = new THREE.Mesh(
     new THREE.SphereGeometry(1, 64, 24),
@@ -495,42 +602,45 @@ function createSqueezerRuntime() {
       roughness: 0.88,
     })
   )
-  puck.scale.set(0.42, 0.08, 0.42)
-  puck.position.set(-1.9, 0.26, 0)
+  puck.scale.set(0.42, 0.095, 0.42)
+  puck.position.set(-1.94, 0.252, 0)
   root.add(puck)
 
   const oilBand = new THREE.Mesh(
-    new THREE.TorusGeometry(0.44, 0.018, 8, 80),
+    new THREE.TorusGeometry(0.44, 0.016, 8, 80),
     createOilMaterial(0.8)
   )
   oilBand.rotation.x = Math.PI / 2
-  oilBand.position.y = 0.265
+  oilBand.position.y = 0.02
   puck.add(oilBand)
 
   const nozzle = new THREE.Mesh(
-    new THREE.BoxGeometry(0.12, 0.18, 1.18),
-    new THREE.MeshStandardMaterial({
-      color: 0x203f46,
-      roughness: 0.5,
-      metalness: 0.18,
-    })
+    new THREE.BoxGeometry(0.16, 0.12, 1.2),
+    frameMaterial
   )
-  nozzle.position.set(1.02, 0.64, 0)
+  nozzle.position.set(1.02, 0.54, 0)
   root.add(nozzle)
+
+  const nozzleBracket = new THREE.Mesh(
+    new THREE.BoxGeometry(0.52, 0.05, 0.08),
+    frameMaterial
+  )
+  nozzleBracket.position.set(0.82, 0.63, -0.64)
+  root.add(nozzleBracket)
 
   const jetMaterial = new THREE.LineBasicMaterial({
     color: 0xb8f1ed,
     transparent: true,
-    opacity: 0.72,
+    opacity: 0.66,
   })
   const jets = new THREE.Group()
 
-  for (let i = 0; i < 9; i += 1) {
-    const z = -0.48 + i * 0.12
+  for (let i = 0; i < 11; i += 1) {
+    const z = -0.5 + i * 0.1
     const jet = new THREE.Line(
       new THREE.BufferGeometry().setFromPoints([
-        new THREE.Vector3(0.95, 0.55, z),
-        new THREE.Vector3(1.55, 0.32, z * 0.72),
+        new THREE.Vector3(0.95, 0.485, z),
+        new THREE.Vector3(1.45, 0.315, z * 0.82),
       ]),
       jetMaterial
     )
@@ -541,33 +651,58 @@ function createSqueezerRuntime() {
 
   const dropletGeometry = new THREE.SphereGeometry(0.035, 10, 10)
   const dropletMaterial = createOilMaterial(0.72)
-  const droplets = new THREE.InstancedMesh(dropletGeometry, dropletMaterial, 18)
+  const droplets = new THREE.InstancedMesh(dropletGeometry, dropletMaterial, 22)
   const dummy = new THREE.Object3D()
+  const dropletSeeds = Array.from({ length: 22 }, () => ({
+    phase: Math.random(),
+    z: -0.38 + Math.random() * 0.76,
+    scale: 0.45 + Math.random() * 0.85,
+  }))
 
-  for (let i = 0; i < 18; i += 1) {
-    dummy.position.set(
-      1.3 + Math.random() * 1.2,
-      0.16 + Math.random() * 0.35,
-      -0.52 + Math.random() * 1.04
-    )
-    dummy.scale.setScalar(0.6 + Math.random() * 1.2)
+  for (let i = 0; i < dropletSeeds.length; i += 1) {
+    dummy.position.set(0.1, 0.16, dropletSeeds[i].z)
+    dummy.scale.setScalar(dropletSeeds[i].scale)
     dummy.updateMatrix()
     droplets.setMatrixAt(i, dummy.matrix)
   }
 
   root.add(droplets)
+  droplets.instanceMatrix.needsUpdate = true
+
+  const beltTop = 0.15
+  const rollerX = -0.23
 
   return {
     root,
     update: (_delta: number, elapsed: number) => {
       const pass = (elapsed * 0.45) % 3.8
-      puck.position.x = -1.9 + pass
-      puck.scale.y =
-        0.08 - Math.max(0, 1 - Math.abs(puck.position.x - 0.03) * 3.2) * 0.035
-      rollerA.rotation.z += 0.045
-      rollerB.rotation.z -= 0.045
-      jets.scale.x = 0.85 + Math.sin(elapsed * 8) * 0.08
-      dropletMaterial.opacity = 0.52 + Math.sin(elapsed * 3) * 0.14
+      puck.position.x = -1.94 + pass
+      const compression = Math.max(
+        0,
+        1 - Math.abs(puck.position.x - rollerX) * 3.2
+      )
+      puck.scale.y = 0.095 - compression * 0.045
+      puck.scale.x = 0.42 + compression * 0.032
+      puck.scale.z = 0.42 + compression * 0.032
+      puck.position.y = beltTop + puck.scale.y + 0.012
+      puck.rotation.z += 0.018
+      lowerRoller.rotation.z += 0.04
+      upperRoller.rotation.z -= 0.045
+      jets.scale.x = 0.9 + Math.sin(elapsed * 8) * 0.06
+      jetMaterial.opacity = 0.54 + Math.sin(elapsed * 9) * 0.08
+      dropletMaterial.opacity = 0.52 + Math.sin(elapsed * 3) * 0.12
+
+      for (let i = 0; i < dropletSeeds.length; i += 1) {
+        const seed = dropletSeeds[i]
+        const t = (elapsed * 0.72 + seed.phase) % 1
+        const x = rollerX + 0.12 + t * 0.58
+        const y = 0.28 - t * 0.17
+        dummy.position.set(x, y, seed.z * (1 - t * 0.22))
+        dummy.scale.setScalar(seed.scale * (1 - t * 0.18))
+        dummy.updateMatrix()
+        droplets.setMatrixAt(i, dummy.matrix)
+      }
+      droplets.instanceMatrix.needsUpdate = true
     },
   } satisfies SceneRuntime
 }
