@@ -296,40 +296,55 @@ function Hero() {
 
           <div className="specimen-paper border border-border p-4">
             <div className="grid gap-4 md:grid-cols-[0.86fr_1.14fr]">
-              <div className="foam-swatch min-h-[320px] border border-border" />
+              <div className="foam-swatch relative min-h-[320px] overflow-hidden border border-border">
+                <div className="absolute top-4 left-4 border border-border bg-background/70 px-3 py-2 font-mono text-[0.65rem] tracking-[0.2em] text-muted-foreground uppercase">
+                  open-cell foam
+                </div>
+                <div className="absolute right-5 bottom-5 left-5 border border-border bg-background/42 p-3 text-xs leading-5 text-muted-foreground">
+                  Large connected pores are the working surface; shape controls
+                  how quickly oil reaches them.
+                </div>
+              </div>
               <div className="flex min-h-[320px] flex-col justify-between gap-6 border border-border bg-background/72 p-5">
                 <div>
                   <p className="font-mono text-xs tracking-[0.24em] text-muted-foreground uppercase">
-                    visual specimen
+                    prototype basis
                   </p>
                   <p className="mt-4 max-w-sm font-heading text-3xl leading-tight font-semibold">
-                    Reticulated foam, dark oil film, measured tow geometry.
+                    Porous puck, oil-contact band, controlled tow spacing.
                   </p>
                 </div>
-                <div className="oil-sheen h-20 border border-border" />
+                <div className="relative h-24 overflow-hidden border border-border bg-secondary/40">
+                  <div className="absolute top-1/2 right-4 left-4 h-10 -translate-y-1/2 bg-[oklch(0.22_0.045_58_/_72%)]" />
+                  <div className="absolute top-[calc(50%-2.25rem)] right-8 left-8 border-t border-primary" />
+                  <div className="absolute top-[calc(50%+2.25rem)] right-8 left-8 border-t border-primary" />
+                  <div className="absolute top-1/2 left-1/2 h-12 w-28 -translate-x-1/2 -translate-y-1/2 border border-[oklch(0.62_0.095_80)] bg-[oklch(0.83_0.1_88)]" />
+                  <div className="absolute top-1/2 left-[calc(50%-4.6rem)] h-px w-12 -translate-y-1/2 bg-foreground/70" />
+                  <div className="absolute top-1/2 left-[calc(50%+2.9rem)] h-px w-12 -translate-y-1/2 bg-foreground/70" />
+                </div>
                 <dl className="grid grid-cols-3 gap-3 text-xs">
                   <div>
-                    <dt className="font-mono tracking-[0.18em] text-muted-foreground uppercase">
-                      Pore use
+                    <dt className="font-mono text-[0.62rem] tracking-[0.12em] text-muted-foreground uppercase">
+                      Pores
                     </dt>
                     <dd className="mt-1 font-heading text-xl font-semibold">
                       85%
                     </dd>
                   </div>
                   <div>
-                    <dt className="font-mono tracking-[0.18em] text-muted-foreground uppercase">
-                      Sweep
+                    <dt className="font-mono text-[0.62rem] tracking-[0.12em] text-muted-foreground uppercase">
+                      Spacing
                     </dt>
                     <dd className="mt-1 font-heading text-xl font-semibold">
-                      Wv
+                      0.5W
                     </dd>
                   </div>
                   <div>
-                    <dt className="font-mono tracking-[0.18em] text-muted-foreground uppercase">
+                    <dt className="font-mono text-[0.62rem] tracking-[0.12em] text-muted-foreground uppercase">
                       Reuse
                     </dt>
                     <dd className="mt-1 font-heading text-xl font-semibold">
-                      wring
+                      squeeze
                     </dd>
                   </div>
                 </dl>
