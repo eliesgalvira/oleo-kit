@@ -302,18 +302,23 @@ function SiteNav({
     event: React.MouseEvent<HTMLAnchorElement>,
     item: NavItem
   ) {
+    event.preventDefault()
     setOpen(false)
 
-    if (!item.tab) {
-      return
+    if (item.tab) {
+      onActiveTabChange(item.tab)
     }
 
-    event.preventDefault()
-    onActiveTabChange(item.tab)
     window.requestAnimationFrame(() => {
-      document
-        .querySelector(item.href)
-        ?.scrollIntoView({ behavior: "smooth", block: "start" })
+      if (item.href === "#overview") {
+        window.scrollTo({ top: 0, behavior: "smooth" })
+        return
+      }
+
+      document.querySelector(item.href)?.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      })
     })
   }
 
@@ -323,7 +328,7 @@ function SiteNav({
         <a
           href="#overview"
           className="group inline-flex items-center gap-3 text-left"
-          onClick={() => setOpen(false)}
+          onClick={(event) => handleItemClick(event, navItems[0])}
         >
           <span className="relative size-8 overflow-hidden border border-border bg-primary">
             <span className="absolute inset-1 rounded-full border border-[oklch(0.48_0.086_61)] bg-[oklch(0.83_0.1_88)]" />
